@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server';import {db} from '@/lib/db';
+export async function GET(){try{return NextResponse.json(await db.project.findMany({include:{organization:true,tasks:true},orderBy:{createdAt:'desc'}}))}catch{return NextResponse.json([])}}
+export async function POST(req:Request){const b=await req.json();if(!b.organizationId||!b.name)return NextResponse.json({error:'organizationId and name required'},{status:400});const p=await db.project.create({data:{organizationId:b.organizationId,name:b.name,status:b.status||'planned',budget:b.budget?Number(b.budget):undefined}});return NextResponse.json(p,{status:201})}

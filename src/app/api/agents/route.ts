@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server';import {db} from '@/lib/db';import {agents} from '@/lib/agents';
+export async function GET(){try{return NextResponse.json(await db.agent.findMany({orderBy:{name:'asc'}}))}catch{return NextResponse.json(agents)}}
+export async function POST(req:Request){const b=await req.json();if(!b.name||!b.key)return NextResponse.json({error:'name and key required'},{status:400});const a=await db.agent.create({data:{name:b.name,key:b.key,provider:b.provider||'openai',model:b.model||'configurable',systemInstructions:b.systemInstructions||'',tools:b.tools,enabled:b.enabled??true}});return NextResponse.json(a,{status:201})}

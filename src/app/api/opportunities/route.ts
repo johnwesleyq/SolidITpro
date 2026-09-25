@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server';import {db} from '@/lib/db';
+export async function GET(){try{return NextResponse.json(await db.opportunity.findMany({include:{organization:true,quotes:true},orderBy:{updatedAt:'desc'}}))}catch{return NextResponse.json([])}}
+export async function POST(req:Request){const b=await req.json();if(!b.organizationId||!b.name)return NextResponse.json({error:'organizationId and name required'},{status:400});const o=await db.opportunity.create({data:{organizationId:b.organizationId,name:b.name,owner:b.owner,expectedRevenue:b.expectedRevenue?Number(b.expectedRevenue):undefined,probability:Number(b.probability||10)}});return NextResponse.json(o,{status:201})}

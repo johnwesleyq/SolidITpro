@@ -1,0 +1,3 @@
+import {NextResponse} from 'next/server';import {db} from '@/lib/db';
+export async function GET(){try{return NextResponse.json(await db.organization.findMany({include:{contacts:true,locations:true,_count:{select:{tickets:true,projects:true,customerServices:true}}},orderBy:{createdAt:'desc'}}))}catch{return NextResponse.json([])}}
+export async function POST(req:Request){const b=await req.json();if(!b.name)return NextResponse.json({error:'name required'},{status:400});const slug=(b.slug||b.name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');const org=await db.organization.create({data:{name:b.name,slug,industry:b.industry,employeeCount:b.employeeCount?Number(b.employeeCount):undefined}});return NextResponse.json(org,{status:201})}
